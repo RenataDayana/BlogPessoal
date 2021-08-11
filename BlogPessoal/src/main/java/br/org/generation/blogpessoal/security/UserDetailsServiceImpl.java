@@ -1,66 +1,28 @@
 package br.org.generation.blogpessoal.security;
 
-import java.util.Collection;
+import java.util.Optional;
 
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import br.org.generation.blogpessoal.model.Usuario;
+import br.org.generation.blogpessoal.repository.UsuarioRepository;
 
-public class UserDetailsServiceImpl implements UserDetails{
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService{
 
-	private static final long serialVersionUID = 1L;
-	private String userName;
-	private String password;
-	
-	public UserDetailsServiceImpl(Usuario user) {
-		this.userName = user.getUsuario();
-		this.password =  user.getSenha();
-				
-	}
-	public UserDetailsServiceImpl() {}
-	
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Autowired
+	private UsuarioRepository userRepository;
 
 	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return password;
-	}
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return userName;
-	}
+		Optional<Usuario> usuario = userRepository.findByUsuario(userName);
+		usuario.orElseThrow(() -> new UsernameNotFoundException(userName + " not found."));
 
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
+		return usuario.map(UserDetailsImpl::new).get();
 	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	
 }

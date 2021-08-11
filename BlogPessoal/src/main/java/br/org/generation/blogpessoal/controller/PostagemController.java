@@ -24,43 +24,37 @@ import br.org.generation.blogpessoal.repository.PostagemRepository;
 public class PostagemController {
 	
 	@Autowired
-	private PostagemRepository repository;
+	private PostagemRepository postagemRepository;
 	
-	// essa anotação/metodo retorna tudo que tem no banco de dados por isso é o findAll
 	@GetMapping 
 	public ResponseEntity<List<Postagem>> GetAll (){
-		return ResponseEntity.ok(repository.findAll());
+		return ResponseEntity.ok(postagemRepository.findAll());
 	}
 	
-	// Essa possibilita a pesquisa por id exemplo http://localhost:8080/postagens/2  e caso não seja encontrado retorna 404-notfound
 	@GetMapping("/{id}") 
 	public ResponseEntity<Postagem> GetById(@PathVariable long id){ 
-		return repository.findById(id)
+		return postagemRepository.findById(id)
 				.map(resp -> ResponseEntity.ok(resp))
 				.orElse(ResponseEntity.notFound().build()); 
 	}
 	
-	// esse metodo permite pesquisar pela discrição como se fosse o Like no SQL.
 	@GetMapping ("/titulo/{titulo}")  
 	public ResponseEntity<List<Postagem>> GetByTitulo(@PathVariable String titulo){
-		return ResponseEntity.ok(repository.findAllByTituloContainingIgnoreCase(titulo)); 
+		return ResponseEntity.ok(postagemRepository.findAllByTituloContainingIgnoreCase(titulo)); 
 	}
 	
-	// esse metodo insere postagens no banco de dados. 
 	@PostMapping 
-	public ResponseEntity<Postagem> post (@RequestBody Postagem postagem) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(postagem));
+	public ResponseEntity<Postagem> postPostagem (@RequestBody Postagem postagem) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
 	}
 	
-	// esse metodo faz alterações nas postagens. 
 	@PutMapping
-	public ResponseEntity<Postagem> put (@RequestBody Postagem postagem) {
-		return ResponseEntity.status(HttpStatus.OK).body(repository.save(postagem));
+	public ResponseEntity<Postagem> putPostagem (@RequestBody Postagem postagem) {
+		return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
 	}
 	
-	// deleta 
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable long id) {
-		repository.deleteById(id); 
+		postagemRepository.deleteById(id); 
 	}
 }
